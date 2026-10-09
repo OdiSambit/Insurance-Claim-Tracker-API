@@ -34,7 +34,7 @@ The API starts with an empty database. Use the examples below to create a policy
 ### Run the tests
 
 ```bash
-mvn test        # 62 unit + web + integration tests
+mvn test        # 66 unit + web + integration tests
 mvn verify      # also enforces the 80% line-coverage gate (JaCoCo)
 ```
 
@@ -233,6 +233,28 @@ docker run -p 8080:8080 -e SPRING_PROFILES_ACTIVE=postgres \
 ```
 
 ---
+
+## Deploy free (Render + Neon)
+
+The repo ships a [`render.yaml`](render.yaml) blueprint and a `Dockerfile`, and the app automatically
+converts a `DATABASE_URL` in `postgres://user:pass@host/db` form into the JDBC settings it needs. No
+code changes are required for the cloud.
+
+> Free-tier tradeoff: the Render free web service sleeps after ~15 minutes idle (the next request
+> cold-starts in ~30–60s) and Neon autosuspends when unused. Neither expires or charges.
+
+1. **Database — [Neon](https://neon.tech)** (free, no expiry): create a project, copy the
+   **connection string** (`postgresql://…?sslmode=require`).
+2. **App — [Render](https://render.com)**: sign up with GitHub → **New → Blueprint** → pick the
+   `Insurance-Claim-Tracker-API` repo. Render reads `render.yaml`.
+3. When prompted, set the `DATABASE_URL` environment variable to the Neon connection string.
+4. Deploy. Render builds the Docker image and health-checks `/actuator/health`.
+
+Your API is then live at `https://insurance-claim-tracker-api.onrender.com` (Swagger UI at
+`/swagger-ui.html`).
+
+Any other provider works too — set `DATABASE_URL` (Railway, Heroku, Koyeb) and expose the port via
+`$PORT`, which the app already honours.
 
 ## Tech stack
 
