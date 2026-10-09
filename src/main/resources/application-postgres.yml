@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/insurance}
+    driver-class-name: org.postgresql.Driver
+    username: ${DATABASE_USERNAME:insurance}
+    password: ${DATABASE_PASSWORD:insurance}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
